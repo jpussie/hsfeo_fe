@@ -81,7 +81,7 @@
         <div class="r-details--container" v-if="createReservationModal">
           <!-- Modal content -->
           <div class="form-content--wrapper">
-            <span class="close" @click="createReservationModal = false">&times;</span>
+            <!-- <span class="close" @click="createReservationModal = false">&times;</span> -->
             <div class="modal-title">
               <span>Create Reservation</span>
             </div>
@@ -144,16 +144,13 @@
                   </select>
                 </div>
                 <div class="form-wrapper">
-                  <div>
-
-                  </div>
-                  <input class="input-form-data" type="number" placeholder="No. of nights" v-model="form.no_of_night">
-                  <input class="input-form-data" type="number" placeholder="No. of persons" v-model="form.no_of_person">
+                  No. of Nights <input class="input-form-data" type="number" placeholder="No. of nights" v-model="form.no_of_night">
+                  No. of Persons: <input class="input-form-data" type="number" placeholder="No. of persons" v-model="form.no_of_person">
                   
                 </div>
                 <div class="form-wrapper">
-                  <input class="input-form-data" type="number" placeholder="No. of beds" v-model="form.no_of_bed">
-                  <input class="input-form-data" type="number" placeholder="No. of towels" v-model="form.no_of_towel">
+                  Extra Foams: <input class="input-form-data" type="number" placeholder="Extra Foams" v-model="form.no_of_bed">
+                  Extra towels: <input class="input-form-data" type="number" placeholder="No. of towels" v-model="form.no_of_towel">
                 </div>
                 <div class="form-wrapper">
                   <div class="date-wrapper">
@@ -167,7 +164,7 @@
                   
                 </div>
                 <div class="form-wrapper">
-                  <textarea class="input-form-data" placeholder="Guest notes" v-model="form.guest_notes">
+                  <textarea class="input-form-data" placeholder="Guest notes" v-model="form.notes">
                   </textarea>
                 </div>
               </div>
@@ -185,6 +182,9 @@
             </div>
             <div class="r-details--sub-title">
               Guest Personal Information
+            </div>
+            <div class="r-details--sub-title">
+              Transaction Code: {{ resData.reservationData?.transaction_code }}
             </div>
             <div class="r-details--content-wrapper">
               
@@ -249,7 +249,7 @@
                   <!-- <div>
                     <button @click="openPaypal()">Paypal</button>
                   </div> -->
-                  <div class="box" v-if="form.payment_type == 'PAYPAL'">
+                  <div class="box" v-if="form.payment_type == 'PAYPAL' && form.status != 'PAID'">
                     <button class="paypal-button" @click="openPaypal()">
                       <span class="paypal-button-title">
                         Pay now with
@@ -323,7 +323,7 @@
                 </div>
                 <!-- payment type credit card -->
                 <div class="r-details--content-payment-d">
-                  <div class="payment-wrapper" v-if="form.payment_type == 'CREDIT CARD'">
+                  <div class="payment-wrapper" v-if="form.payment_type == 'CREDIT CARD' && form.status != 'PAID'">
                     <h3>Credit Card Payment</h3>
                     <div>Accepted Cards</div>
                     <div class="icon-container">

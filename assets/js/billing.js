@@ -40,7 +40,8 @@ window.addEventListener('load', function(){
         total: 0,
         status: '',
         payment_status: '',
-        payment_type: ''
+        payment_type: '',
+        notes: ''
       })
 
       Vue.onBeforeMount(() => {
@@ -88,6 +89,11 @@ window.addEventListener('load', function(){
 
         axios.post(domain_url+'package_billing', payload_handler).then(response => {
           console.log('response', response);
+          if (response.data.success) {
+            createReservationModal.value = false
+            viewDetailsById(response.data.results)
+            getAllReservation()
+          }
         })
       }
 
