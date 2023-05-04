@@ -1,6 +1,189 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        
-    </head>
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+  <title>HSFEO</title>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <link rel='stylesheet' href='../assets/styles/billing.css'>
+  <link rel='stylesheet' href='../assets/styles/paypal.css'>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src='../assets/js/main.js'></script>
+  <script src='../assets/js/billing.js'></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+  <div id="app">
+    <div>
+      <!-- <div class="nav-header">
+        &nbsp;
+      </div> -->
+      
+      <div class="main">
+        <div class="r-details--container">
+          <!-- Modal content -->
+          <div class="form-content--wrapper">
+            
+            <div class="modal-title">
+              <span>HSFEO Reservation</span>
+            </div>
+            <div class="billing-form">
+              <div class="content-wrapper">
+                <div class="form-wrapper">
+                  <label>Guest Personal Information</label>
+                  <input class="input-form-data" type="text" placeholder="First Name" v-model="form.fname" required>
+                  <input class="input-form-data" type="text" placeholder="Middle Name" v-model="form.mname" required>
+                  <input class="input-form-data" type="text" placeholder="Last Name" v-model="form.lname" required>
+                </div>
+                <div class="form-wrapper">
+                  <label for="gender">Gender</label>
+                  <select class="input-form-data" v-model="form.gender">
+                    <option disabled value="">Select Gender</option>
+                    <option>Male</option>
+                    <option>Female</option>
+                  </select>
+                  <select class="input-form-data" v-model="form.guest_type">
+                    <option disabled value="">Select Type of Guest</option>
+                    <option>Walk-in</option>
+                    <option>Reservation</option>
+                  </select>
+                  <!-- <input class="input-form-data" type="text" placeholder="Gender"> -->
+                  <input class="input-form-data" type="text" placeholder="Contact Number" required v-model="form.contact_number" required>
+                </div>
+                <div class="form-wrapper">
+                  <input class="input-form-data" type="email" placeholder="Email" v-model="form.email" required>
+                </div>
+                <div class="form-wrapper">
+                  <label>Reservation Details</label>
+                  <select class="input-form-data" v-model="form.room_type">
+                    <option disabled value="">Select Room Type</option>
+                    <option v-for="(item, i) in roomTypes" :key="i">{{item.type}}</option>
+                    <!-- <option>Premium</option>
+                    <option>Economy</option> -->
+                  </select>
+                  <select class="input-form-data" v-model="form.room_number">
+                    <option disabled value="">Select Room Number</option>
+                    <option v-if="form.room_type == 'Dorm Type'">201</option>
+                    <option v-if="form.room_type == 'Dorm Type'">202</option>
+                    <option v-if="form.room_type == 'Dorm Type'">203</option>
+                    <option v-if="form.room_type == 'Dorm Type'">204</option>
+                    <option v-if="form.room_type == 'Dorm Type'">205</option>
+                    <option v-if="form.room_type == 'Dorm Type'">206</option>
+                    <option v-if="form.room_type == 'Dorm Type'">207</option>
+                    <option v-if="form.room_type == 'Dorm Type'">208</option>
+                    <option v-if="form.room_type == 'Dorm Type'">209</option>
+                    <option v-if="form.room_type == 'Dorm Type'">210</option>
+                    <option v-if="form.room_type == 'Air-Conditioned'">301</option>
+                    <option v-if="form.room_type == 'Air-Conditioned'">302</option>
+                    <option v-if="form.room_type == 'Air-Conditioned'">303</option>
+                    <option v-if="form.room_type == 'Air-Conditioned'">304</option>
+                    <option v-if="form.room_type == 'Air-Conditioned'">305</option>
+                    <option v-if="form.room_type == 'Deluxe'">306</option>
+                    <option v-if="form.room_type == 'Deluxe'">307</option>
+                    <option v-if="form.room_type == 'Deluxe'">308</option>
+                    <option v-if="form.room_type == 'Deluxe'">309</option>
+                    <option v-if="form.room_type == 'Deluxe'">310</option>
+                  </select>
+                </div>
+               
+                <div class="form-wrapper">
+                  No. of Nights <input class="input-form-data" type="number" placeholder="No. of nights" v-model="form.no_of_night">
+                  No. of Persons: <input class="input-form-data" type="number" placeholder="No. of persons" v-model="form.no_of_person">
+                  
+                </div>
+                <div class="form-wrapper">
+                  Extra Foams: <input class="input-form-data" type="number" placeholder="Extra Foams" v-model="form.no_of_bed">
+                  Extra towels: <input class="input-form-data" type="number" placeholder="No. of towels" v-model="form.no_of_towel">
+                </div>
+                <div class="form-wrapper">
+                  <div class="date-wrapper">
+                    <label class="date-label">Check in date:</label><br>
+                    <input class="input-form-data-date" type="date" v-model="form.check_in_date">
+                  </div>
+                  <div class="date-wrapper">
+                    <label class="date-label">Check out date:</label><br>
+                    <input class="input-form-data-date" type="date" v-model="form.check_out_date">
+                  </div>
+                  
+                </div>
+                <div class="form-wrapper">
+                  <div style="padding-bottom: 10px;">
+                    <span>Payment Type:</span>
+                    <select class="input-form-data" v-model="form.payment_type">
+                      <option disabled value="">Select Payment Type</option>
+                      <option>CASH</option>
+                      <option>CREDIT CARD</option>
+                      <option>PAYPAL</option>
+                    </select>
+                  </div>
+                  <div class="box" v-if="form.payment_type == 'PAYPAL' && form.status != 'PAID'">
+                    <button class="paypal-button" @click="openPaypal()">
+                      <span class="paypal-button-title">
+                        Pay now with
+                      </span>
+                      <span class="paypal-logo">
+                        <i>Pay</i><i>Pal</i>
+                      </span>
+                    </button>
+                  </div>
+                </div>
+                <div class="form-wrapper">
+                  <textarea class="input-form-data" placeholder="Guest notes" v-model="form.notes">
+                  </textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-footer">
+            <button class="button-cancel" @click="createReservationModal = false, showTableData = true">Cancel</button>
+            <button class="button-add" @click="storeResData()">Submit Booking</button>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+    <div v-if="form.payment_type == 'CREDIT CARD' && form.status != 'PAID'">
+      <div class="modal" v-if="openCreditModal">
+        <div class="modal-content">
+          <span class="close" @click="openCreditModal = false">&times;</span>
+          <div class="r-details--content-payment-d">
+            <div class="payment-wrapper">
+              <h3>Credit Card Payment</h3>
+              <div>Accepted Cards</div>
+              <div class="icon-container">
+                <i class="fa fa-cc-visa" style="color:navy;">&nbsp; &nbsp;</i>
+                <i class="fa fa-cc-amex" style="color:blue;">&nbsp; &nbsp;</i>
+                <i class="fa fa-cc-mastercard" style="color:red;">&nbsp; &nbsp;</i>
+                <i class="fa fa-cc-discover" style="color:orange;">&nbsp; &nbsp;</i>
+              </div>
+              <div for="cname">Name on Card</div>
+              <input type="text" id="cname" name="cardname" placeholder="John More Doe">
+              <div for="ccnum">Credit card number</div>
+              <input type="text" id="ccnum" name="cardnumber" placeholder="1111-2222-3333-4444">
+              <div for="expmonth">Exp Month</div>
+              <input type="text" id="expmonth" name="expmonth" placeholder="September">
+              <div class="row">
+                <div class="col-50">
+                  <div>Exp Year</div>
+                  <input type="text" id="expyear" name="expyear" placeholder="2018">
+                </div>
+                <div class="col-50">
+                  <div>CVV</div>
+                  <input type="text" id="cvv" name="cvv" placeholder="352">
+                </div>
+              </div>
+            </div>
+            <div class="form-footer">
+              <button class="button-cancel" @click="openCreditModal = false">Back</button>
+              <button class="button-add" @click="payCredit()">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</body>
 </html>

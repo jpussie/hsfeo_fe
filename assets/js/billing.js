@@ -11,6 +11,9 @@ window.addEventListener('load', function(){
       const reservations = Vue.ref()
       const showDetails = Vue.ref(false)
       const showTableData = Vue.ref(false)
+      const editMode = Vue.ref(false)
+      const openCreditModal = Vue.ref(true)
+
       const roomTypes = Vue.ref(
         [
           {'id': 0, 'type':'Dorm Type', 'price':'700'},
@@ -20,6 +23,9 @@ window.addEventListener('load', function(){
       )
       
       const form = Vue.ref({
+        reservationData_id: '',
+        guestData_id: '',
+        reservationDetailsData_id: '',
         fname : '',
         mname : '',
         lname : '',
@@ -46,7 +52,36 @@ window.addEventListener('load', function(){
 
       Vue.onBeforeMount(() => {
         getAllReservation()
+        
       })
+
+      const clearForm = () => {
+        form.value.reservationData_id  = ''
+        form.value.guestData_id  = ''
+        form.value.reservationDetailsData_id  = ''
+        form.value.fname  = ''
+        form.value.mname  = ''
+        form.value.lname  = ''
+        form.value.gender  = ''
+        form.value.guest_type = ''
+        form.value.contact_number  = ''
+        form.value.email = ''
+        form.value.room_type = ''
+        form.value.room_price = ''
+        form.value.room_number = ''
+        form.value.no_of_night = ''
+        form.value.no_of_person = ''
+        form.value.no_of_bed = ''
+        form.value.no_of_towel = ''
+        form.value.check_in_date = ''
+        form.value.check_out_date = ''
+        form.value.notes = ''
+        form.value.total = ''
+        form.value.status = ''
+        form.value.payment_status = ''
+        form.value.payment_type = ''
+
+      }
 
       const RoomTypePrice = (value) => {
         if (value == 'Deluxe') {
@@ -91,13 +126,53 @@ window.addEventListener('load', function(){
           console.log('response', response);
           if (response.data.success) {
             createReservationModal.value = false
-            viewDetailsById(response.data.results)
+            showTableData.value = false
+            viewDetailsById(response.data.results, 'view')
             getAllReservation()
+            Swal.fire(
+              'Success!',
+              'You successfully created reservation!',
+              'success'
+            )
+            clearForm()
           }
         })
       }
 
-      const viewDetailsById = (id) => {
+      const updateResData = () => {
+        form.value.total = Number(RoomTypePrice(form.value.room_type)) * form.value.no_of_night
+        form.value.room_price = Number(RoomTypePrice(form.value.room_type))
+        var payload_handler = {
+          package_entry : 'update',
+          package_data : form.value
+        }
+
+        axios.post(domain_url+'package_billing', payload_handler).then(response => {
+          console.log('response', response);
+          if (response.data.success) {
+            createReservationModal.value = false
+            showTableData.value = false
+            viewDetailsById(response.data.results, 'view')
+            getAllReservation()
+            Swal.fire(
+              'Changes Saved!',
+              'You successfully updated reservation details!',
+              'success'
+            )
+            clearForm()
+          }
+        })
+      }
+
+      payCredit = () => {
+        Swal.fire(
+          'Success Payment!',
+          'Successfuly Paid',
+          'success'
+        )
+        openCreditModal.value = false
+      }
+      const viewDetailsById = (id, type) => {
         var payload_handler = {
           package_entry : 'view',
           package_data : {
@@ -108,20 +183,99 @@ window.addEventListener('load', function(){
         axios.post(domain_url+'package_billing', payload_handler).then(response => {
           if (response.data.success) {
             resData.value = response.data.results
-            if (resData.value.reservationDetailsData) {
-              form.value.status = resData.value.reservationDetailsData.status
-              form.value.payment_status = resData.value.reservationData.payment_status
+            form.value.reservationData_id  = resData.value.reservationData.id
+            form.value.guestData_id  = resData.value.guestData.id
+            form.value.reservationDetailsData_id  = resData.value.reservationDetailsData.id
+            form.value.fname  = resData.value.guestData.fname
+            form.value.mname  = resData.value.guestData.mname
+            form.value.lname  = resData.value.guestData.lname
+            form.value.gender  = resData.value.guestData.gender
+            form.value.guest_type = resData.value.guestData.guest_type
+            form.value.contact_number  = resData.value.guestData.contact_number
+            form.value.email = resData.value.guestData.email
+            form.value.room_type = resData.value.reservationDetailsData.room_type
+            form.value.room_price = resData.value.reservationDetailsData.room_price
+            form.value.room_number = resData.value.reservationDetailsData.room_number
+            form.value.no_of_night = resData.value.reservationDetailsData.no_of_nights
+            form.value.no_of_person = resData.value.reservationDetailsData.no_of_person
+            form.value.no_of_bed = resData.value.reservationDetailsData.no_of_extra_foam
+            form.value.no_of_towel = resData.value.reservationDetailsData.no_of_extra_towels
+            form.value.check_in_date = resData.value.reservationDetailsData.check_in_date
+            form.value.check_out_date = resData.value.reservationDetailsData.check_out_date
+            form.value.notes = resData.value.reservationDetailsData.notes
+            form.value.total = resData.value.reservationDetailsData.total
+            form.value.status = resData.value.reservationDetailsData.status
+            form.value.payment_status = resData.value.reservationData.payment_status
+            form.value.payment_type = resData.value.reservationData.payment_type
+          
+            if (type == 'update') {
+              
+              createReservationModal.value = true
+              editMode.value = true
+
+              console.log('form', form.value)
+            }else{
+              showDetails.value = true
+              createReservationModal.value = false
+              console.log('showTableData.value', showTableData.value);
             }
-            showDetails.value = true
-            createReservationModal.value = false
             showTableData.value = false
-            console.log('showTableData.value', showTableData.value);
+            
           }
+        })
+        
+      }
+
+      savePayment = () => {
+        console.log('form.value', form.value);
+
+        var payload_handler = {
+          package_entry : 'update',
+          package_data : form.value
+        }
+
+        axios.post(domain_url+'package_billing', payload_handler).then(response=>{
+            console.log('response', response);
+            getAllReservation()
+            Swal.fire(
+              'Changes Saved!',
+              'You successfully updated reservation details!',
+              'success'
+            )
+            showDetails.value = false
+            // clearForm()
+            // viewDetailsById(response.data.results, 'view')
         })
       }
 
+      onChange = (event) => {
+        console.log(event, event);
+      }
+      
       const openPaypal = () => {
-        window.open('https://www.sandbox.paypal.com/checkoutnow?sessionID=uid_730d46d7d8_mti6mzy6mzm&buttonSessionID=uid_a37b59258b_mti6ndu6mzi&stickinessID=uid_2c07f0fff0_mti6ndi6nda&smokeHash=&fundingSource=paypal&buyerCountry=PH&locale.x=en_US&commit=true&clientID=AZDxjDScFpQtjWTOUtWKbyN_bDt4OgqaF4eYXlewfBP4-8aqX3PiV8e1GWU6liB2CUXlkA59kJXE7M6R&env=sandbox&sdkMeta=eyJ1cmwiOiJodHRwczovL3d3dy5wYXlwYWwuY29tL3Nkay9qcz9jbGllbnQtaWQ9dGVzdCZjdXJyZW5jeT1VU0QiLCJhdHRycyI6eyJkYXRhLXVpZCI6InVpZF91cWZ2a3lmamxwcmhsaHVpc21udnRuaHZxZWpyZnYifX0&xcomponent=1&version=5.0.370&token=1XH82302X27807434','popup','width=600,height=600'); return false;
+        window.open('https://www.paypal.com/ph/signin','popup','width=600,height=600'); return false;
+      }
+
+      statusClass = (value) => {
+        if (value == 'BOOKED') {
+          return 'primary'
+        }else if (value == 'CHECKED-IN') {
+          return 'warning'
+        }else if(value == 'CHECKED-OUT') {
+          return 'success'
+        }else if (value == 'CANCELED') {
+          return 'danger'
+        }
+      }
+
+      paymentStatusClass = (value) => {
+        if (value == 'UNPAID') {
+          return 'warning'
+        }else if(value == 'PAID') {
+          return 'success'
+        }else if (value == 'PENDING') {
+          return 'danger'
+        }
       }
 
       return {
@@ -135,11 +289,19 @@ window.addEventListener('load', function(){
         reservations,
         showDetails,
         showTableData,
+        editMode,
+        openCreditModal,
+        
+        statusClass,
+        paymentStatusClass,
+        savePayment,
         openPaypal,
+        payCredit,
         //functions
         storeResData,
         RoomTypePrice,
         viewDetailsById,
+        updateResData
       }
     }
   }).mount('#app')

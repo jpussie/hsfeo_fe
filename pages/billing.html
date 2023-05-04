@@ -12,16 +12,28 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <script src='../assets/js/main.js'></script>
   <script src='../assets/js/billing.js'></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
   <div id="app">
-    <div class="container">
-      <div>
-        <button v-if="!createReservationModal && showTableData" class="button-add" @click="createReservationModal = true">Add Reservation</button>
-        
-        <!-- <button v-if="!createReservationModal class="button-add" @click="createReservationModal = true">Add Reservation</button> -->
+    
+    <div class="sidebar">
+      <a href="#home"><img src="../assets/images/logo.png" alt="hsfeo logo" width="160" height="50"></a>
+      <a class="active" href="#home">Reservations</a>
+      <a href="#news">News</a>
+      <a href="#contact">Contact</a>
+      <a href="#about">About</a>
+    </div>
+    <div class="content">
+      <div class="nav-header">
+        &nbsp;
       </div>
+      
       <div class="main">
+        <div>
+          <button v-if="!createReservationModal && showTableData" class="button-add" @click="createReservationModal = true">Add Reservation</button>
+          <!-- <button v-if="!createReservationModal class="button-add" @click="createReservationModal = true">Add Reservation</button> -->
+        </div>
         <div v-if="!createReservationModal" class="main-table">
           <table class="table-content" v-if="showTableData">
             <thead>
@@ -36,9 +48,9 @@
                 <th>Room Charges</th>
                 <th>No. of Nights</th>
                 <th>Total</th>
-                <th>Status</th>
                 <th>Payment Type</th>
                 <th>Payment Status</th>
+                <th>Status</th>
                 <th> &nbsp; </th>
               </tr>
             </thead>
@@ -54,34 +66,22 @@
                 <td>P {{ item?.room_price }}</td>
                 <td>{{ item?.no_of_nights }}</td>
                 <td>P {{ item?.total }}</td> 
-                <td>{{ item?.status }}</td> 
-                <td>Paypal</td>
-                <td>{{ item?.payment_status }}</td> 
-                <td><button class="button-add" @click="viewDetailsById(item?.id)">More Details</button>
+                
+                <td>{{ item?.payment_type }}</td>
+                <td :class="paymentStatusClass(item.payment_status)">{{ item?.payment_status }}</td> 
+                <td :class="statusClass(item?.status)">{{ item?.status }}</td> 
+                <td>
+                  <button class="button-add" @click="viewDetailsById(item?.id, 'view')">More Details</button> &nbsp; 
+                  <button class="button-edit" @click="viewDetailsById(item?.id, 'update')">Edit</button>
                 </td>
               </tr>
-              <!-- <tr>
-                <td>2</td>
-                <td>John Doe</td>
-                <td>04-21-2023</td>
-                <td>04-23-2023</td>
-                <td>RM-00002</td>
-                <td>Economy</td>
-                <td>304</td>
-                <td>P 900.00</td>
-                <td>2</td>
-                <td>P 1800.00</td>
-                <td>Checked-in</td>
-                <td>Cash</td>
-                <td>Paid</td>
-              </tr> -->
             </tbody>
           </table>
         </div>
         <div class="r-details--container" v-if="createReservationModal">
           <!-- Modal content -->
           <div class="form-content--wrapper">
-            <!-- <span class="close" @click="createReservationModal = false">&times;</span> -->
+            
             <div class="modal-title">
               <span>Create Reservation</span>
             </div>
@@ -143,6 +143,7 @@
                     <option v-if="form.room_type == 'Deluxe'">310</option>
                   </select>
                 </div>
+               
                 <div class="form-wrapper">
                   No. of Nights <input class="input-form-data" type="number" placeholder="No. of nights" v-model="form.no_of_night">
                   No. of Persons: <input class="input-form-data" type="number" placeholder="No. of persons" v-model="form.no_of_person">
@@ -164,16 +165,42 @@
                   
                 </div>
                 <div class="form-wrapper">
+                  <div style="padding-bottom: 10px;">
+                    <span>Payment Type:</span>
+                    <select class="input-form-data" v-model="form.payment_type">
+                      <option disabled value="">Select Payment Type</option>
+                      <option>CASH</option>
+                      <option>CREDIT CARD</option>
+                      <option>PAYPAL</option>
+                    </select>
+                  </div>
+                  <div class="box" v-if="form.payment_type == 'PAYPAL' && form.status != 'PAID'">
+                    <button class="paypal-button" @click="openPaypal()">
+                      <span class="paypal-button-title">
+                        Pay now with
+                      </span>
+                      <span class="paypal-logo">
+                        <i>Pay</i><i>Pal</i>
+                      </span>
+                    </button>
+                  </div>
+                </div>
+                <div class="form-wrapper">
                   <textarea class="input-form-data" placeholder="Guest notes" v-model="form.notes">
                   </textarea>
                 </div>
               </div>
             </div>
           </div>
-          <div class="form-footer">
-            <button v-if="createReservationModal" class="button-cancel" @click="createReservationModal = false">Cancel</button>
-            <button v-if="createReservationModal" class="button-add" @click="storeResData()">Create</button>
+          <div class="form-footer" v-if="editMode">
+            <button v-if="createReservationModal" class="button-cancel" @click="createReservationModal = false, showTableData = true">Cancel</button>
+            <button v-if="createReservationModal" class="button-add" @click="updateResData()">Save Changes</button>
           </div>
+          <div class="form-footer" v-else>
+            <button v-if="createReservationModal" class="button-cancel" @click="createReservationModal = false, showTableData = true">Cancel</button>
+            <button v-if="createReservationModal" class="button-add" @click="storeResData()">Submit Booking</button>
+          </div>
+          
         </div>
         <div v-if="showDetails">
           <div class="r-details--container">
@@ -219,10 +246,10 @@
                     <span>Status:</span>
                     <select class="input-form-data" v-model="form.status">
                       <option disabled value="">Select Status</option>
-                      <option>RESERVED</option>
                       <option>BOOKED</option>
                       <option>CHECKED-IN</option>
                       <option>CHECKED-OUT</option>
+                      <option>CANCELED</option>
                     </select>
                   </div>
                 </div>
@@ -246,10 +273,7 @@
                       <option>PAYPAL</option>
                     </select>
                   </div>
-                  <!-- <div>
-                    <button @click="openPaypal()">Paypal</button>
-                  </div> -->
-                  <div class="box" v-if="form.payment_type == 'PAYPAL' && form.status != 'PAID'">
+                  <div class="box" v-if="form.payment_type == 'PAYPAL' && form.payment_status != 'PAID'">
                     <button class="paypal-button" @click="openPaypal()">
                       <span class="paypal-button-title">
                         Pay now with
@@ -316,49 +340,61 @@
                     </div>
                   </div>
                   <div class="r-details--content-rate">
-                    <div>Total Payment:
+                    <div>Total:
                       <span>P {{ resData.reservationDetailsData?.total }}</span>
                     </div>
                   </div>
                 </div>
                 <!-- payment type credit card -->
-                <div class="r-details--content-payment-d">
-                  <div class="payment-wrapper" v-if="form.payment_type == 'CREDIT CARD' && form.status != 'PAID'">
-                    <h3>Credit Card Payment</h3>
-                    <div>Accepted Cards</div>
-                    <div class="icon-container">
-                      <i class="fa fa-cc-visa" style="color:navy;">&nbsp; &nbsp;</i>
-                      <i class="fa fa-cc-amex" style="color:blue;">&nbsp; &nbsp;</i>
-                      <i class="fa fa-cc-mastercard" style="color:red;">&nbsp; &nbsp;</i>
-                      <i class="fa fa-cc-discover" style="color:orange;">&nbsp; &nbsp;</i>
-                    </div>
-                    <div for="cname">Name on Card</div>
-                    <input type="text" id="cname" name="cardname" placeholder="John More Doe">
-                    <div for="ccnum">Credit card number</div>
-                    <input type="text" id="ccnum" name="cardnumber" placeholder="1111-2222-3333-4444">
-                    <div for="expmonth">Exp Month</div>
-                    <input type="text" id="expmonth" name="expmonth" placeholder="September">
-                    <div class="row">
-                      <div class="col-50">
-                        <div>Exp Year</div>
-                        <input type="text" id="expyear" name="expyear" placeholder="2018">
-                      </div>
-                      <div class="col-50">
-                        <div>CVV</div>
-                        <input type="text" id="cvv" name="cvv" placeholder="352">
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                
               </div>
               
               <div class="form-footer">
                 <button class="button-cancel" @click="showDetails = false, showTableData = true">Back</button>
-                <button class="button-add" @click="savePayment()">Save Changes</button>
+                <button class="button-add" @click="savePayment()">Save</button>
               </div>
             </div>
           </div>
           
+        </div>
+      </div>
+    </div>
+    <div v-if="form.payment_type == 'CREDIT CARD' && form.status != 'PAID'">
+      <div class="modal" v-if="openCreditModal">
+        <div class="modal-content">
+          <span class="close" @click="openCreditModal = false">&times;</span>
+          <div class="r-details--content-payment-d">
+            <div class="payment-wrapper">
+              <h3>Credit Card Payment</h3>
+              <div>Accepted Cards</div>
+              <div class="icon-container">
+                <i class="fa fa-cc-visa" style="color:navy;">&nbsp; &nbsp;</i>
+                <i class="fa fa-cc-amex" style="color:blue;">&nbsp; &nbsp;</i>
+                <i class="fa fa-cc-mastercard" style="color:red;">&nbsp; &nbsp;</i>
+                <i class="fa fa-cc-discover" style="color:orange;">&nbsp; &nbsp;</i>
+              </div>
+              <div for="cname">Name on Card</div>
+              <input type="text" id="cname" name="cardname" placeholder="John More Doe">
+              <div for="ccnum">Credit card number</div>
+              <input type="text" id="ccnum" name="cardnumber" placeholder="1111-2222-3333-4444">
+              <div for="expmonth">Exp Month</div>
+              <input type="text" id="expmonth" name="expmonth" placeholder="September">
+              <div class="row">
+                <div class="col-50">
+                  <div>Exp Year</div>
+                  <input type="text" id="expyear" name="expyear" placeholder="2018">
+                </div>
+                <div class="col-50">
+                  <div>CVV</div>
+                  <input type="text" id="cvv" name="cvv" placeholder="352">
+                </div>
+              </div>
+            </div>
+            <div class="form-footer">
+              <button class="button-cancel" @click="openCreditModal = false">Back</button>
+              <button class="button-add" @click="payCredit()">Save</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

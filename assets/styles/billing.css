@@ -2,11 +2,33 @@
     padding: 10px;
   }
   
+  .warning{
+    color: rgb(225, 149, 34);
+  }
+  .danger{
+    color: red;
+  }
+  .primary{
+    color: blue;
+  }
+  .success{
+    color: green;
+  }
+
   .button-add{
     border: 1px solid;
     border-color: aliceblue;
     background: rgb(7, 127, 232);
     color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .button-edit{
+    border: 1px solid;
+    border-color: rgb(107, 140, 169);
+    background: #fff;
+    color: rgb(7, 127, 232);
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
@@ -29,7 +51,7 @@
   }
   
   .main{
-    padding: 10px 0px;
+    margin-top: 70px;
   }
   
   .main-table{
@@ -90,8 +112,8 @@
     margin: auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 80%;
-    height: 70%;
+    width: 60vh;
+    height: 60vh;
   }
   
   .modal-title{
@@ -233,6 +255,66 @@
   }
 
   .payment-wrapper{
-    padding-right: 20px;
-    padding-left: 60px;
+    width: 50vh;
+  }             
+
+  .nav-header{
+    padding: 20px;
+    background-color: #292626;
+    margin-bottom: 10px;
+    position: fixed;
+    top: 1;
+    width: 100%
   }
+
+  .sidebar {
+    margin: 0;
+    padding: 0;
+    width: 200px;
+    background-color: #292626;
+    position: fixed;
+    height: 100%;
+    overflow: auto;
+  }
+  
+  .sidebar a {
+    display: block;
+    color: black;
+    padding: 16px;
+    text-decoration: none;
+  }
+   
+  .sidebar a.active {
+    background-color: rgb(7, 127, 232);
+    color: white;
+  }
+  
+  .sidebar a:hover:not(.active) {
+    background-color: #555;
+    color: white;
+  }
+  
+  div.content {
+    margin-left: 200px;
+    padding: 1px 16px;
+    height: 1000px;
+  }
+  
+  @media screen and (max-width: 700px) {
+    .sidebar {
+      width: 100%;
+      height: auto;
+      position: relative;
+    }
+    .sidebar a {float: left;}
+    div.content {margin-left: 0;}
+  }
+  
+  @media screen and (max-width: 400px) {
+    .sidebar a {
+      text-align: center;
+      float: none;
+    }
+  }
+
+  
