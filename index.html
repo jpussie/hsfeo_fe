@@ -5,18 +5,21 @@
   <meta http-equiv='X-UA-Compatible' content='IE=edge'>
   <title>HSFEO</title>
   <meta name='viewport' content='width=device-width, initial-scale=1'>
-  <link rel='stylesheet' href='../assets/styles/billing.css'>
+  <link rel='stylesheet' href='../assets/styles/index.css'>
   <link rel='stylesheet' href='../assets/styles/paypal.css'>
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <script src='../assets/js/main.js'></script>
-  <script src='../assets/js/billing.js'></script>
+  <script src='../assets/js/index.js'></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
   <div id="app">
-    <div>
+    <div class="header" v-if="showModalCreate">
+      <img src="../assets/images/logo.png" alt="hsfeo logo" width="220" height="60">
+    </div>
+    <div v-if="showModalCreate">
       <!-- <div class="nav-header">
         &nbsp;
       </div> -->
@@ -178,6 +181,70 @@
             <div class="form-footer">
               <button class="button-cancel" @click="openCreditModal = false">Back</button>
               <button class="button-add" @click="payCredit()">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="invoice-container" v-if="!showModalCreate">
+      <div class="invoice-wrapper">
+        <div class="invoice-content">
+          
+          <div class="invoice-content-wrapper">
+            
+            <div class="invoice-content-l-data">
+              <div>
+                <img src="../assets/images/logo.png" alt="hsfeo logo" width="220" height="60">
+              </div>
+              <div class="invoice-tran-number"> 
+                {{ invoiceData?.trans_code }}
+              </div>
+            </div>
+            <div class="invoice-content-r-data">
+              <div class="invoice-title">INVOICE</div>
+              <div class="invoice-date">{{ invoiceData?.data }}</div>
+              <div>To:</div>
+              <div>Mr/Mrs. {{ invoiceData?.recipient_name }}</div>
+            </div>
+          </div>
+
+          <div class="invoice-table">
+            <table>
+              <thead>
+                <th>NO</th>
+                <th>QTY</th>
+                <th>DESCRIPTION</th>
+                <th>PRICE</th>
+                <th>TOTAL</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{{ invoiceData?.id }}</td>
+                  <td>{{ invoiceData?.qty }}</td>
+                  <td>{{ invoiceData?.description }}</td>
+                  <td> {{'P '+ invoiceData?.price }}</td>
+                  <td> {{'P '+ invoiceData?.total }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="invoice-total">
+            <div class="invoice-total-data">
+              <div>Payment Type</div>
+              <div>{{ invoiceData?.payment_type }}</div>
+            </div>
+            <div class="invoice-total-m-data">
+              <div>Sub Toal: </div>
+              <div>Tax: </div>
+              <div>Discount: </div>
+              <div class="grand_total">Grand Total: </div>
+            </div>
+            <div class="invoice-total-r-data">
+              <div> {{ 'P '+ invoiceData?.sub_total }}</div>
+              <div> {{ 'P '+ invoiceData?.tax }}</div>
+              <div> {{ 'P '+ invoiceData?.discount }}</div>
+              <div class="grand_total"> {{ 'P '+ invoiceData?.grand_total }}</div>
             </div>
           </div>
         </div>

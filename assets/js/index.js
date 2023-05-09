@@ -13,7 +13,8 @@ window.addEventListener('load', function(){
       const showTableData = Vue.ref(false)
       const editMode = Vue.ref(false)
       const openCreditModal = Vue.ref(true)
-      const viewInvoice = Vue.ref(false)
+      const showModalCreate = Vue.ref(true)
+      const invoiceData = Vue.ref()
 
       const roomTypes = Vue.ref(
         [
@@ -127,14 +128,15 @@ window.addEventListener('load', function(){
           console.log('response', response);
           if (response.data.success) {
             createReservationModal.value = false
-            showTableData.value = false
-            viewDetailsById(response.data.results, 'view')
-            getAllReservation()
+            invoiceData.value = response.data.results
+            // viewDetailsById(response.data.results, 'view')
+            // getAllReservation()
             Swal.fire(
               'Success!',
               'You successfully created reservation!',
               'success'
             )
+            showModalCreate.value = false
             clearForm()
           }
         })
@@ -237,13 +239,12 @@ window.addEventListener('load', function(){
 
         axios.post(domain_url+'package_billing', payload_handler).then(response=>{
             console.log('response', response);
-            getAllReservation()
             Swal.fire(
               'Changes Saved!',
               'You successfully updated reservation details!',
               'success'
             )
-            showDetails.value = false
+            showModalCreate.value = false
             // clearForm()
             // viewDetailsById(response.data.results, 'view')
         })
@@ -280,6 +281,8 @@ window.addEventListener('load', function(){
       }
 
       return {
+
+        showModalCreate,
         message,
         showModal,
         createReservationModal,
@@ -292,7 +295,8 @@ window.addEventListener('load', function(){
         showTableData,
         editMode,
         openCreditModal,
-        viewInvoice,
+        invoiceData,
+        
         statusClass,
         paymentStatusClass,
         savePayment,
@@ -302,7 +306,8 @@ window.addEventListener('load', function(){
         storeResData,
         RoomTypePrice,
         viewDetailsById,
-        updateResData
+        updateResData,
+        
       }
     }
   }).mount('#app')
