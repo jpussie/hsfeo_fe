@@ -8,6 +8,7 @@
     <link rel='stylesheet' href='../assets/styles/login.css'>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src='../assets/js/main.js'></script>
     <script src='../assets/js/login.js'></script>
   </head>
   <body>
@@ -20,14 +21,15 @@
               Email
             </label>
             <div class="form-data">
-              <input class="input-form-data" type="text" placeholder="Please enter your email" required v-model="form.email">
+              <input class="input-form-data" type="text" placeholder="Please enter your email" required v-model="form.email" @keyup="inputData($event)">
             </div>
             <label>Password</label>
             <div class="form-data">
-              <input class="input-form-data" type="password" placeholder="Please input your password" required v-model="form.password">
+              <input class="input-form-data" type="password" placeholder="Please input your password" required v-model="form.password" @keyup="inputData($event)">
             </div>
+            <div class="error-message" v-for="(item, i) in error_msg" :key="i"> {{item}}</div>
             <div class="form-footer">
-              <button class="btn-primary" @click="">Login</button>
+              <button class="btn-primary" @click="loginUser()">Login</button>
             </div>
           </div>
         </div>

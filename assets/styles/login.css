@@ -63,3 +63,9 @@ label{
   border-radius: 5px;
   border: 1px solid rgb(243, 220, 220);
 }
+
+.error-message{
+  color: red;
+  text-align: left;
+  padding: 10px;
+}

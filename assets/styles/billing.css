@@ -2,6 +2,9 @@
     padding: 10px;
   }
   
+  .user-name{
+    color: #fff;
+  }
   .warning{
     color: rgb(225, 149, 34);
   }
@@ -51,7 +54,7 @@
   }
   
   .main{
-    margin-top: 70px;
+    margin-top: 80px;
   }
   
   .main-table{
@@ -317,4 +320,99 @@
     }
   }
 
+  .invoice-container{
+    background-color:rgb(236, 240, 241);
+    height: 100vh;
+    padding-top: 30px;
+  }
+  .invoice-wrapper{
+    /* margin-top: 20px; */
+    margin-left: 150px;
+    margin-right: 150px;
+    border: solid 1px rgb(162, 157, 157);
+    padding: 20px;
+    background-color: #fff;
+  }
   
+  .invoice-content{
+    margin-top: 50px;
+  }
+  
+  .invoice-content-wrapper{
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  
+  .invoice-content-l-data{
+    flex: 50%;
+    padding-bottom: 20px;
+  }
+  
+  .invoice-content-l-data div{
+    padding-bottom: 10px;
+  }
+  
+  .invoice-content-r-data{
+    flex: 50%;
+    text-align: right;
+    padding-bottom: 20px;
+  }
+  
+  .invoice-tran-number{
+    padding-top: 100px;
+  }
+  
+  .invoice-total{
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  
+  .invoice-total-data{
+    flex: 40%;
+    padding-bottom: 20px;
+  }
+  .invoice-total-data div{
+    padding: 20px;
+  }
+  
+  .invoice-total-m-data{
+    flex: 26%;
+    text-align: right;
+  }
+  
+  .invoice-total-m-data div{
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+  
+  .invoice-total-r-data{
+    flex: 34%;
+    text-align: center;
+  }
+  .invoice-total-r-data div{
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+  
+  .grand_total{
+    background-color: #000;
+    color: yellow;
+    font-size: 25px;
+  }
+  
+  .invoice-title{
+    color: red;
+    font-size: 25px;
+    font-weight: bold;
+    /* text-shadow: 2px 2px black; */
+  }
+  
+  .invoice-date{
+    padding-bottom: 50px;
+  }

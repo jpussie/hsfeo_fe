@@ -3,6 +3,7 @@ window.addEventListener('load', function(){
   const { createApp } = Vue
   createApp({
     setup() {
+      const current_user = Vue.ref()
       const message = Vue.ref('this is vue')
       const resData = Vue.ref()
       const showModal = Vue.ref(false)
@@ -14,7 +15,7 @@ window.addEventListener('load', function(){
       const editMode = Vue.ref(false)
       const openCreditModal = Vue.ref(true)
       const viewInvoice = Vue.ref(false)
-
+      const invoiceData = Vue.ref()
       const roomTypes = Vue.ref(
         [
           {'id': 0, 'type':'Dorm Type', 'price':'700'},
@@ -51,7 +52,10 @@ window.addEventListener('load', function(){
         notes: ''
       })
 
-      Vue.onBeforeMount(() => {
+      Vue.onBeforeMount( async () => {
+        await getCurrentUser()
+        
+        current_user.value = user_data
         getAllReservation()
         
       })
@@ -226,6 +230,22 @@ window.addEventListener('load', function(){
         })
         
       }
+      getInvoice = (id) => {
+        var payload_handler = {
+          package_entry : 'get_invoice',
+          package_data : {
+            'id' : id
+          }
+        }
+        axios.post(domain_url+'package_billing', payload_handler).then(response=>{
+          console.log('response', response);
+          if (response.data.success) {
+            invoiceData.value = response.data.results
+            showDetails.value = false
+            viewInvoice.value = true
+          }
+        })
+      }
 
       savePayment = () => {
         console.log('form.value', form.value);
@@ -302,7 +322,11 @@ window.addEventListener('load', function(){
         storeResData,
         RoomTypePrice,
         viewDetailsById,
-        updateResData
+        updateResData,
+        invoiceData,
+        current_user,
+        logoutUser,
+        getInvoice
       }
     }
   }).mount('#app')

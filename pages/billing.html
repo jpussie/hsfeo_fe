@@ -20,16 +20,19 @@
     <div class="sidebar">
       <a href="#home"><img src="../assets/images/logo.png" alt="hsfeo logo" width="160" height="50"></a>
       <a class="active" href="#home">Reservations</a>
+      <a @click="logoutUser()">Logout</a>
       <!-- <a href="#news">News</a>
       <a href="#contact">Contact</a>
       <a href="#about">About</a> -->
     </div>
     <div class="content">
       <div class="nav-header">
+        <div class="user-name">{{ current_user }}</div>
         &nbsp;
       </div>
       
       <div class="main">
+        
         <div>
           <button v-if="!createReservationModal && showTableData" class="button-add" @click="createReservationModal = true">Add Reservation</button>
           <!-- <button v-if="!createReservationModal class="button-add" @click="createReservationModal = true">Add Reservation</button> -->
@@ -342,6 +345,7 @@
                   <div class="r-details--content-rate">
                     <div>Total:
                       <span>P {{ resData.reservationDetailsData?.total }}</span>
+                      
                     </div>
                   </div>
                 </div>
@@ -352,11 +356,80 @@
               <div class="form-footer">
                 <button class="button-cancel" @click="showDetails = false, showTableData = true">Back</button>
                 <button class="button-add" @click="savePayment()">Save</button>
-                <button class="button-primary" @click="viewInvoice = true">View Invoice</button>
+                <button class="button-edit" @click="getInvoice(resData.reservationData?.inv_id)">View Invoice</button>
               </div>
             </div>
           </div>
           
+        </div>
+        <div class="invoice-container" v-show="viewInvoice">
+          <div class="invoice-wrapper">
+            <div class="invoice-content">
+              
+              <div class="invoice-content-wrapper">
+                
+                <div class="invoice-content-l-data">
+                  <div>
+                    <img src="../assets/images/logo.png" alt="hsfeo logo" width="220" height="60">
+                  </div>
+                  <div class="invoice-tran-number"> 
+                    {{ invoiceData?.trans_code }}
+                  </div>
+                </div>
+                <div class="invoice-content-r-data">
+                  <div class="invoice-title">INVOICE</div>
+                  <div class="invoice-date">{{ invoiceData?.data }}</div>
+                  <div>To:</div>
+                  <div>Mr/Mrs. {{ invoiceData?.recipient_name }}</div>
+                </div>
+              </div>
+    
+              <div class="invoice-table">
+                <table>
+                  <thead>
+                    <th>NO</th>
+                    <th>QTY</th>
+                    <th>DESCRIPTION</th>
+                    <th>PRICE</th>
+                    <th>TOTAL</th>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>{{ invoiceData?.id }}</td>
+                      <td>{{ invoiceData?.qty }}</td>
+                      <td>{{ invoiceData?.description }}</td>
+                      <td> {{'P '+ invoiceData?.price }}</td>
+                      <td> {{'P '+ invoiceData?.total }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+    
+              <div class="invoice-total">
+                <div class="invoice-total-data">
+                  <div>Payment Type</div>
+                  <div>{{ invoiceData?.payment_type }}</div>
+                </div>
+                <div class="invoice-total-m-data">
+                  <div>Sub Toal: </div>
+                  <div>Tax: </div>
+                  <div>Discount: </div>
+                  <div class="grand_total">Grand Total: </div>
+                </div>
+                <div class="invoice-total-r-data">
+                  <div> {{ 'P '+ invoiceData?.sub_total }}</div>
+                  <div> {{ 'P '+ invoiceData?.tax }}</div>
+                  <div> {{ 'P '+ invoiceData?.discount }}</div>
+                  <div class="grand_total"> {{ 'P '+ invoiceData?.grand_total }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br>
+          <div class="form-footer">
+            <button class="button-add" @click="viewInvoice=false, showDetails=true">Back To Details</button>
+          </div>
+         
         </div>
       </div>
     </div>
@@ -399,6 +472,8 @@
         </div>
       </div>
     </div>
+
+   
     
   </div>
 </body>
