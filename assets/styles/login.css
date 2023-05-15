@@ -8,12 +8,16 @@
 
 .container-wrapper{
   width: 25%;
-  border-radius: 10px;
-  border: 1px solid rgb(210, 186, 186);
+ 
+}
+.form-content-data{
+  padding: 15px;
 }
 
 .form-content{
-  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid rgb(210, 186, 186);
+  
 }
 
 .form-data{

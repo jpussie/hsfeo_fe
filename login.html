@@ -14,22 +14,31 @@
   <body>
     <div id="app">
       <div class="container">
+        
         <div class="container-wrapper">
-          <div class="form-title">HSFEO Login</div>
+          <div class="logo-cms">
+            <img src="../assets/images/cm-logo.png" alt="hsfeo logo" width="220" height="210">
+          </div>
+          <br>
           <div class="form-content">
-            <label>
-              Email
-            </label>
-            <div class="form-data">
-              <input class="input-form-data" type="text" placeholder="Please enter your email" required v-model="form.email" @keyup="inputData($event)">
+            <div class="form-title">
+              HSFEO Login
             </div>
-            <label>Password</label>
-            <div class="form-data">
-              <input class="input-form-data" type="password" placeholder="Please input your password" required v-model="form.password" @keyup="inputData($event)">
-            </div>
-            <div class="error-message" v-for="(item, i) in error_msg" :key="i"> {{item}}</div>
-            <div class="form-footer">
-              <button class="btn-primary" @click="loginUser()">Login</button>
+            <div class="form-content-data">
+              <label>
+                Email
+              </label>
+              <div class="form-data">
+                <input class="input-form-data" type="text" placeholder="Please enter your email" required v-model="form.email" @keyup="inputData($event)">
+              </div>
+              <label>Password</label>
+              <div class="form-data">
+                <input class="input-form-data" type="password" placeholder="Please input your password" required v-model="form.password" @keyup="inputData($event)">
+              </div>
+              <div class="error-message" v-for="(item, i) in error_msg" :key="i"> {{item}}</div>
+              <div class="form-footer">
+                <button class="btn-primary" @click="loginUser()">Login</button>
+              </div>
             </div>
           </div>
         </div>
