@@ -28,6 +28,7 @@ window.addEventListener('load', function(){
         reservationData_id: '',
         guestData_id: '',
         reservationDetailsData_id: '',
+        inv_id: '',
         fname : '',
         mname : '',
         lname : '',
@@ -145,6 +146,7 @@ window.addEventListener('load', function(){
       }
 
       const updateResData = () => {
+        console.log('form data', form.value);
         form.value.total = Number(RoomTypePrice(form.value.room_type)) * form.value.no_of_night
         form.value.room_price = Number(RoomTypePrice(form.value.room_type))
         var payload_handler = {
@@ -152,12 +154,14 @@ window.addEventListener('load', function(){
           package_data : form.value
         }
 
+        console.log('total', form.value.total);
+
         axios.post(domain_url+'package_billing', payload_handler).then(response => {
           console.log('response', response);
           if (response.data.success) {
             createReservationModal.value = false
             showTableData.value = false
-            viewDetailsById(response.data.results, 'view')
+            // viewDetailsById(response.data.results, 'view')
             getAllReservation()
             Swal.fire(
               'Changes Saved!',
@@ -189,6 +193,7 @@ window.addEventListener('load', function(){
           if (response.data.success) {
             resData.value = response.data.results
             form.value.reservationData_id  = resData.value.reservationData.id
+            form.value.inv_id  = resData.value.reservationData.inv_id
             form.value.guestData_id  = resData.value.guestData.id
             form.value.reservationDetailsData_id  = resData.value.reservationDetailsData.id
             form.value.fname  = resData.value.guestData.fname
@@ -269,6 +274,27 @@ window.addEventListener('load', function(){
         })
       }
 
+      deleteData = (id) => {
+        var payload_handler = {
+          package_entry : 'delete_reservation',
+          package_data : {
+            'id' : id
+          }
+        }
+        axios.post(domain_url+'package_billing', payload_handler).then(response=>{
+          console.log('response', response);
+          if (response.data.success) {
+            Swal.fire(
+              'Deleted!',
+              'You successfully deleted data!',
+              'warning'
+            )
+            showDetails.value = false
+            showTableData.value = true
+          }
+        })
+      }
+
       onChange = (event) => {
         console.log(event, event);
       }
@@ -326,7 +352,8 @@ window.addEventListener('load', function(){
         invoiceData,
         current_user,
         logoutUser,
-        getInvoice
+        getInvoice,
+        deleteData
       }
     }
   }).mount('#app')

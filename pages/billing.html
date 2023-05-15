@@ -357,6 +357,7 @@
                 <button class="button-cancel" @click="showDetails = false, showTableData = true">Back</button>
                 <button class="button-add" @click="savePayment()">Save</button>
                 <button class="button-edit" @click="getInvoice(resData.reservationData?.inv_id)">View Invoice</button>
+                <button class="button-cancel" @click="deleteData(resData.reservationData?.id)">Delete</button>
               </div>
             </div>
           </div>
