@@ -284,13 +284,13 @@ window.addEventListener('load', function(){
         axios.post(domain_url+'package_billing', payload_handler).then(response=>{
           console.log('response', response);
           if (response.data.success) {
+            showDetails.value = false
+            getAllReservation()
             Swal.fire(
               'Deleted!',
               'You successfully deleted data!',
               'warning'
             )
-            showDetails.value = false
-            showTableData.value = true
           }
         })
       }
